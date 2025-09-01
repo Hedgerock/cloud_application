@@ -4,3 +4,13 @@
 ```
 docker compose up -d
 ```
+### Default credentials for postman Authorization Header
+
+#### Email:
+```
+hedgerock@gmail.com
+```
+#### Password:
+```
+12345
+```
