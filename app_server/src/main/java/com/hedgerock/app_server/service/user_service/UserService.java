@@ -1,7 +1,7 @@
 package com.hedgerock.app_server.service.user_service;
 
-import com.hedgerock.app_server.dto.CurrentUserDTO;
-import com.hedgerock.app_server.dto.UserDTO;
+import com.hedgerock.app_server.dto.users.CurrentUserDTO;
+import com.hedgerock.app_server.dto.users.UserDTO;
 
 import java.util.List;
 

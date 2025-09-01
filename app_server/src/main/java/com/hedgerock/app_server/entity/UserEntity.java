@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Data
-@ToString(exclude = "files")
+@ToString(exclude = { "files", "authorities" })
 public class UserEntity {
 
     @Id
@@ -33,4 +33,13 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<FileEntity> files;
+
+    @ManyToMany
+    @JoinTable(
+            schema = "develop_schema",
+            name = "t_user_authorities",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "authority_id")
+    )
+    private List<AuthoritiesEntity> authorities;
 }

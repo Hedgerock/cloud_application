@@ -1,5 +1,6 @@
-package com.hedgerock.app_server.dto;
+package com.hedgerock.app_server.dto.users;
 
+import com.hedgerock.app_server.dto.files.FileDTO;
 import com.hedgerock.app_server.entity.UserEntity;
 import lombok.Builder;
 

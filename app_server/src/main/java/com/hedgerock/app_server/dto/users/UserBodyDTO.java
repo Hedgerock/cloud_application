@@ -1,4 +1,4 @@
-package com.hedgerock.app_server.dto;
+package com.hedgerock.app_server.dto.users;
 
 import com.hedgerock.app_server.entity.UserEntity;
 

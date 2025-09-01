@@ -1,7 +1,7 @@
 package com.hedgerock.app_server.rest;
 
-import com.hedgerock.app_server.dto.CurrentUserDTO;
-import com.hedgerock.app_server.dto.UserDTO;
+import com.hedgerock.app_server.dto.users.CurrentUserDTO;
+import com.hedgerock.app_server.dto.users.UserDTO;
 import com.hedgerock.app_server.service.user_service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

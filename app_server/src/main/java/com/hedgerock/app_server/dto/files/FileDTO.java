@@ -1,4 +1,4 @@
-package com.hedgerock.app_server.dto;
+package com.hedgerock.app_server.dto.files;
 
 import com.hedgerock.app_server.entity.FileEntity;
 import lombok.Builder;
