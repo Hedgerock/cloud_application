@@ -19,6 +19,8 @@ services:
     build:
       context: ./app_server
       dockerfile: Dockerfile
+    environment:
+      CLIENT_PORT: 5173
     networks:
       cloud:
     ports:
