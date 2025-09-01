@@ -1,0 +1,43 @@
+services:
+  cloud_database:
+    container_name: application-database
+    image: postgres:17
+    environment:
+      POSTGRES_DB: cloud_database
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - '5433:5432'
+    volumes:
+      - db_info:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      cloud:
+
+  cloud_application:
+    container_name: cloud_application_server
+    build:
+      context: ./app_server
+      dockerfile: Dockerfile
+    networks:
+      cloud:
+    ports:
+      - '8080:8080'
+    depends_on:
+      - cloud_database
+
+  cloud_client:
+    container_name: cloud_application_client
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    depends_on:
+      - cloud_application
+    ports:
+      - '5173:4200'
+    networks:
+      cloud:
+volumes:
+  db_info:
+networks:
+  cloud:

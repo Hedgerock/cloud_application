@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://cloud_database:5432/cloud_database
+    username: user
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
