@@ -9,6 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
 
+    //TODO REPLACE FOR CONSTANT VALUE (NOT SAFETY)
     @Value("${client.port.value}")
     private String PORT;
 
@@ -17,8 +18,13 @@ public class CorsConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedHeaders("*")
                 .allowedMethods(HttpMethod.PUT.name(), HttpMethod.GET.name(), HttpMethod.POST.name(), HttpMethod.DELETE.name())
-                .allowedOrigins(String.format("http://localhost:%s", PORT), "http://cloud_client:4200")
+                .allowedOrigins(
+                        String.format("http://localhost:%s", PORT),
+                        "http://cloud_client:4200",
+                        "http://localhost:4200"
+                )
                 .allowCredentials(true)
                 .maxAge(3600);
     }
+
 }

@@ -4,8 +4,8 @@ CREATE TABLE IF NOT EXISTS develop_schema.t_users (
   id SERIAL PRIMARY KEY,
   email VARCHAR NOT NULL UNIQUE,
   password VARCHAR,
-  disk_space BIGINT DEFAULT 10737418240,
-  used_space BIGINT DEFAULT 0
+  disk_space BIGINT NOT NULL DEFAULT 10737418240,
+  used_space BIGINT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS develop_schema.t_files (
