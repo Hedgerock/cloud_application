@@ -7,7 +7,20 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+  flyway:
+    enabled: true
 
 client:
   port:
-    value: ${CLIENT_PORT:5173}
+    value: ${CLIENT_PORT:4200}
+
+email:
+  config:
+    host: smtp.gmail.com
+    port: 587
+    username: dmitriyvas21@gmail.com
+    password: skyd fbhp rsja hzmm

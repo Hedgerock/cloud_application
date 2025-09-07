@@ -1,0 +1,2 @@
+SELECT setval('develop_schema.t_users_id_seq',  (SELECT MAX(id) FROM develop_schema.t_users), true);
+SELECT setval('develop_schema.t_user_authorities_id_seq',  (SELECT MAX(id) FROM develop_schema.t_user_authorities), true);

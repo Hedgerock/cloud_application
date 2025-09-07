@@ -1,46 +1,35 @@
-import {AppStructure} from "../components/template/AppStructure.tsx";
+import {AppStructure} from "../hoc/template/AppStructure.tsx";
 import {useGetUserByIdQuery} from "../redux/api/usersApi.ts";
+import {LoadingProgress} from "../components/loading/LoadingProgress.tsx";
+import {type FC} from "react";
+import {Loading} from "../hoc/Loading.tsx";
+import {ErrorPage} from "./ErrorPage.tsx";
+import type {ISuccessPageProps} from "../models/ISuccessPageProps.tsx";
+import {CurrentUser} from "../components/current_user/CurrentUser.tsx";
+import {useAuth} from "../hooks/useAuth.ts";
 
 export const StartingPage = () => {
-    const { isLoading, data } = useGetUserByIdQuery(1);
+    const { data, isError, isFetching, currentData } = useGetUserByIdQuery(1);
+    const { isAuthenticated } = useAuth();
 
     return (
-        <AppStructure>
-            <h1>Hello world</h1>
-            { !isLoading &&
-                <div>
-                    <h1>{ data?.email }</h1>
-                    <div>
-                        <h4>id:</h4>
-                        <span>{ data?.id }</span>
-                    </div>
-                    <div>
-                        <h4>Total memory:</h4>
-                        <span>{ data?.diskSpace }</span>
-                    </div>
-                    <div>
-                        <h4>Used memory:</h4>
-                        <span>{ data?.usedSpace }</span>
-                    </div>
-                    <div>
-                        <h4>Files</h4>
-                        { data?.files?.length &&
-                            <ul>
-                                {data.files.map(el => {
-                                        return (
-                                            <li key={el.id}>{ el.name }</li>
-                                        )
-                                    })
-                                }
-                            </ul>
-                        }
-                    </div>
-                    <div>
-                        <h4>id:</h4>
-                        <span>{ data?.id }</span>
-                    </div>
-                </div>
-            }
-        </AppStructure>
+        <>
+            <LoadingProgress isFetching={isFetching} />
+            <AppStructure>
+                { isError || !isAuthenticated
+                    ? <ErrorPage message={"User not found"} />
+                    : <SuccessPage currentData={ currentData } data={ data }/>
+                }
+            </AppStructure>
+        </>
+    )
+}
+
+const SuccessPage: FC<ISuccessPageProps> = ({ currentData, data }) => {
+
+    return (
+        <Loading isLoading={ !currentData }>
+            { data && <CurrentUser entity={ data } />}
+        </Loading>
     )
 }

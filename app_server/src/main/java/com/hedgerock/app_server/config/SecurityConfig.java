@@ -45,8 +45,8 @@ public class SecurityConfig {
                             .requestMatchers("/api/v1/users/**").authenticated()
                             .anyRequest().permitAll()
                 )
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .build();

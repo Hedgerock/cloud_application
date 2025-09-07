@@ -1,10 +1,18 @@
 import {Link} from "react-router-dom";
 import './Header.css';
+import {useAuth} from "../../hooks/useAuth.ts";
+import {Loading} from "../../hoc/Loading.tsx";
+import {LoadingProgress} from "../loading/LoadingProgress.tsx";
+import {AuthenticatedUser} from "../auth/authenticated_user/AuthenticatedUser.tsx";
+import {AuthenticationBox} from "../auth/authentication_box/AuthenticationBox.tsx";
 
 export const Header = () => {
+    const { isAuthenticated, isLoading, user } = useAuth();
 
     return (
         <div className="header">
+            <LoadingProgress isFetching={isLoading} />
+
             <h1 className="header__title">Header</h1>
 
             <ul className="header-list">
@@ -18,13 +26,12 @@ export const Header = () => {
                 </li>
             </ul>
 
-            <div className="header-authorization-box">
-                <div className="authorization-buttons">
-                    <button className="authorization-buttons__button">Sign in</button>
-                    <span>/</span>
-                    <button className="authorization-buttons__button">Sign up</button>
-                </div>
-            </div>
+            <Loading isLoading={ isLoading }>
+                { isAuthenticated && user
+                    ? <AuthenticatedUser entity={ user } />
+                    : <AuthenticationBox />
+                }
+            </Loading>
         </div>
     )
 }

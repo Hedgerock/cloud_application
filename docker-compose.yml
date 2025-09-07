@@ -3,14 +3,35 @@ services:
     container_name: application-database
     image: postgres:17
     environment:
-      POSTGRES_DB: cloud_database
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      - POSTGRES_DB=cloud_database
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
     ports:
       - '5433:5432'
     volumes:
       - db_info:/var/lib/postgresql/data
     restart: unless-stopped
+    networks:
+      cloud:
+
+  cloud_redis:
+    container_name: cloud_application_cache
+    image: redis:latest
+    ports:
+      - '6379:6379'
+    networks:
+      cloud:
+
+  cloud_redis_insight:
+    container_name: cloud_application_cache_client
+    image: redis/redisinsight:latest
+    ports:
+      - '5540:5540'
+    restart: always
+    depends_on:
+      - cloud_redis
+    volumes:
+      - redis_info:/data
     networks:
       cloud:
 
@@ -20,7 +41,9 @@ services:
       context: ./app_server
       dockerfile: Dockerfile
     environment:
-      CLIENT_PORT: 5173
+      - CLIENT_PORT=5173
+      - REDIS_HOST=cloud_application_cache
+      - REDIS_PORT=6379
     networks:
       cloud:
     ports:
@@ -40,6 +63,7 @@ services:
     networks:
       cloud:
 volumes:
+  redis_info:
   db_info:
 networks:
   cloud:
