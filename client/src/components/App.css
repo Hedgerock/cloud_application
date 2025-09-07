@@ -1,0 +1,41 @@
+:root {
+    --headerAndFooterBorderRadius: .6rem;
+}
+
+#root {
+    width: 100vw;
+    height: 100vh;
+
+    padding: 1.5rem;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.header, .footer {
+    border: 3px solid silver;
+}
+
+.header, .footer, .main {
+    padding: .5rem;
+}
+
+.header {
+    border-top-left-radius: var(--headerAndFooterBorderRadius);
+    border-top-right-radius: var(--headerAndFooterBorderRadius);
+}
+
+.footer {
+    border-bottom-left-radius: var(--headerAndFooterBorderRadius);
+    border-bottom-right-radius: var(--headerAndFooterBorderRadius);
+}
+
+.main {
+    border-left: 3px solid silver;
+    border-right: 3px solid silver;
+    display: flex;
+    height: 100%;
+    max-height: 100%;
+    overflow-y: auto;
+}
