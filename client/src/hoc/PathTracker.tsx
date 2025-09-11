@@ -30,8 +30,5 @@ export const PathTracker = () => {
         }
     }, [dispatch, pathname, navigationType]);
 
-    console.log(prevPathRef.current);
-    console.log(pathHistory.current);
-
     return null;
 }

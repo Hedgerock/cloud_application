@@ -1,6 +1,6 @@
 import {Link} from "react-router-dom";
 import './Header.css';
-import {useAuth} from "../../hooks/useAuth.ts";
+import {useAuth} from "../../hooks/auth/useAuth.ts";
 import {Loading} from "../../hoc/Loading.tsx";
 import {LoadingProgress} from "../loading/LoadingProgress.tsx";
 import {AuthenticatedUser} from "../auth/authenticated_user/AuthenticatedUser.tsx";

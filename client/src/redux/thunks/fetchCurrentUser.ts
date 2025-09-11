@@ -13,7 +13,7 @@ export const fetchCurrentUser = createAsyncThunk(
                 credentials: "include"
             });
 
-            if (!response.ok) throw new Error("Not authenticated");
+            if (!response.ok) return;
 
             const user: IAuthUser = await response.json();
             dispatch(setUser(user));

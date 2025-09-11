@@ -54,7 +54,7 @@ public class MyUserService implements UserService {
 
     @Override
     @Transactional
-    public void confirmUser(String token) {
+    public UserEntity confirmUser(String token) {
         String key = getKeyToken(token);
         String cached = redisTemplate.opsForValue().get(key);
 
@@ -65,11 +65,11 @@ public class MyUserService implements UserService {
             AuthoritiesEntity userRole = authorityRepository
                     .findByAuthority(Roles.USER.name()).orElseThrow();
 
-            repository.save(registerDTO.toEntity(userRole));
-
             redisTemplate.delete(key);
+            return repository.save(registerDTO.toEntity(userRole));
         } catch (JsonProcessingException e) {
             showErrorMessage(cached);
+            throw new RuntimeException();
         }
     }
 

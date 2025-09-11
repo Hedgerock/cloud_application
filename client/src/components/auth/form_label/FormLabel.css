@@ -1,0 +1,25 @@
+.auth-form-fieldset-label {
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+
+    position: relative;
+}
+
+.auth-form-fieldset-label__title {
+    font-size: 1.2rem;
+}
+
+.auth-form-fieldset-label__value {
+    padding: .5rem;
+    width: 100%;
+    border-radius: .5rem;
+    font-size: 1.1rem;
+}
+
+.auth-form-fieldset-label__show-hide-button {
+    position: absolute;
+    top: 75%;
+    right: 0;
+    transform: translate(0, -50%);
+}

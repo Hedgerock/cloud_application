@@ -1,15 +1,16 @@
-import {useLazyGetCurrentUserQuery, useLoginMutation} from "../redux/api/authApi.ts";
+import {useLazyGetCurrentUserQuery, useLoginMutation} from "../../redux/api/authApi.ts";
 import {useDispatch} from "react-redux";
-import {setUser} from "../redux/slices/authSlice.ts";
-import type {AppDispatch} from "../redux/store/store.ts";
-import {clearLoginHistory} from "../redux/slices/pathSlice.ts";
+import {setUser} from "../../redux/slices/authSlice.ts";
+import type {AppDispatch} from "../../redux/store/store.ts";
+import {clearLoginHistory} from "../../redux/slices/pathSlice.ts";
+import {useCallback} from "react";
 
 export const useLogin = () => {
     const [ login, { isLoading, isError, error } ] = useLoginMutation();
     const [ getUser ] = useLazyGetCurrentUserQuery();
     const dispatch = useDispatch<AppDispatch>();
 
-    const handleLogin = async(email: string, password: string) => {
+    const handleLogin = useCallback(async(email: string, password: string) => {
         try {
             await login({ email, password }).unwrap();
             const user = await getUser().unwrap();
@@ -22,7 +23,7 @@ export const useLogin = () => {
         } catch (e) {
             console.error("Login failed:", e)
         }
-    }
+    }, [dispatch, getUser, login])
 
     return { login: handleLogin, isLoading, isError, error }
 }
