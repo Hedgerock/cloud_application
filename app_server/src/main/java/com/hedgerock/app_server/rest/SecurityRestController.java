@@ -4,6 +4,7 @@ import com.hedgerock.app_server.dto.auth.AuthDTO;
 import com.hedgerock.app_server.dto.auth.LoginDTO;
 import com.hedgerock.app_server.dto.auth.RegisterDTO;
 import com.hedgerock.app_server.dto.auth.emailValidation.ValidationTokenDTO;
+import com.hedgerock.app_server.entity.UserEntity;
 import com.hedgerock.app_server.service.email_service.EmailService;
 import com.hedgerock.app_server.service.user_service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,6 +21,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +38,7 @@ public class SecurityRestController {
     private final AuthenticationManager authenticationManager;
     private final EmailService emailService;
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterDTO registerDTO,
@@ -52,6 +55,7 @@ public class SecurityRestController {
         final String uuid = UUID.randomUUID().toString();
 
         emailService.sendConfirmationEmail(registerDTO.email(), uuid, registerDTO);
+        userService.cachePendingUser(uuid, registerDTO.getEncryptedDTO(passwordEncoder));
 
         return ResponseEntity.ok().build();
     }

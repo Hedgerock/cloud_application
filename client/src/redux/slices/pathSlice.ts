@@ -28,7 +28,7 @@ export const pathSlice = createSlice({
           state.pathHistory = state.pathHistory.filter(history => history !== action.payload.target);
         },
         clearLoginHistory(state) {
-            state.pathHistory = state.pathHistory.filter(history => history !== "/login")
+            state.pathHistory = state.pathHistory.filter(history => !history.startsWith("/auth"))
         }
     }
 })

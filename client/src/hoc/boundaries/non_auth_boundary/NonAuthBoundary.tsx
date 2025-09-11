@@ -1,5 +1,5 @@
 import type {FC, PropsWithChildren} from "react";
-import {useAuth} from "../../../hooks/useAuth.ts";
+import {useAuth} from "../../../hooks/auth/useAuth.ts";
 import {Navigate} from "react-router-dom";
 import {useSelector} from "react-redux";
 import type {RootState} from "../../../redux/store/store.ts";

@@ -1,9 +1,8 @@
-import type {FC} from "react";
+import {type FC, memo} from "react";
 import type {ICurrentEntity} from "../../models/ICurrentEntity.ts";
 import type {IUser} from "../../models/IUser.ts";
 
-export const CurrentUser: FC<ICurrentEntity<IUser>> = ({ entity:data }) => {
-
+export const CurrentUser: FC<ICurrentEntity<IUser>> = memo(({ entity:data }) => {
 
     return (
         <>
@@ -40,4 +39,4 @@ export const CurrentUser: FC<ICurrentEntity<IUser>> = ({ entity:data }) => {
             </div>
         </>
     )
-}
+})

@@ -1,7 +1,6 @@
 package com.hedgerock.app_server.service.email_service;
 
 import com.hedgerock.app_server.dto.auth.RegisterDTO;
-import com.hedgerock.app_server.service.user_service.UserService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -22,8 +20,6 @@ import java.util.NoSuchElementException;
 public class MyEmailService implements EmailService {
 
     private final JavaMailSender javaMailSender;
-    private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
 
     @Value("${client.port.value}")
     private String CLIENT_PORT;
@@ -50,7 +46,7 @@ public class MyEmailService implements EmailService {
         String html = loadConfirmationHtml("confirmation");
 
         String subject = "Registration process";
-        String confirmationUrl = String.format((CLIENT_PATH + "/confirm?token=%s"), token);
+        String confirmationUrl = String.format((CLIENT_PATH + "/auth/confirm?token=%s"), token);
 
         html = html.replace("{{confirmation_url}}", confirmationUrl);
 
@@ -64,7 +60,6 @@ public class MyEmailService implements EmailService {
             helper.setFrom(FROM);
 
             javaMailSender.send(mimeMessage);
-            userService.cachePendingUser(token, registerDTO.getEncryptedDTO(passwordEncoder));
         } catch (MessagingException e) {
             throw new IllegalStateException("Can't send email to: " + to);
         }

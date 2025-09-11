@@ -1,9 +1,9 @@
-import {AppStructure} from "../hoc/template/AppStructure.tsx";
+import {AppStructure} from "../../hoc/template/AppStructure.tsx";
 import {Link} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import type {AppDispatch, RootState} from "../redux/store/store.ts";
+import type {AppDispatch, RootState} from "../../redux/store/store.ts";
 import {useEffect} from "react";
-import {removeCurrentPath} from "../redux/slices/pathSlice.ts";
+import {removeCurrentPath} from "../../redux/slices/pathSlice.ts";
 
 export const NotFoundPage = () => {
     const dispatch = useDispatch<AppDispatch>();

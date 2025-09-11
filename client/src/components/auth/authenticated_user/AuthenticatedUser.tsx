@@ -2,7 +2,7 @@ import * as React from "react";
 import {type FC, memo} from "react";
 import type {ICurrentEntity} from "../../../models/ICurrentEntity.ts";
 import type {IAuthUser} from "../../../redux/api/authApi.ts";
-import {useLogout} from "../../../hooks/useLogout.ts";
+import {useLogout} from "../../../hooks/auth/useLogout.ts";
 
 export const AuthenticatedUser: FC<ICurrentEntity<IAuthUser>> = memo(({ entity: user }) => {
     const { logout } = useLogout();
