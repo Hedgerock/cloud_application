@@ -33,9 +33,10 @@ CREATE TABLE IF NOT EXISTS develop_schema.t_user_authorities (
 INSERT INTO develop_schema.t_users
 (id, email, password)
 VALUES
-    (1, 'hedgerock@gmail.com', '$2a$10$zIGv/KeXIxQEUVkh5R7Zg.3J5Gg.prFrWfS4h/vC.n3rSMbLIHGvG'),
-    (2, 'slayzer@gmail.com', '$2a$10$MTieVrRO3NqgbdhERviFNeAZSGufSy8uCS4yMaHWS/riMMMUWecnC'),
-    (3, 'thexacki@gmail.com', '$2a$10$Z1yaYJdLu06eSDs0zarcnu50Fo7M//7Myz.uTPbpKdvJr19FsMkDC');
+    (1, 'hedgerock@gmail.com', '$2a$10$BX/p48JoXPNttp9rqlq4vOVnIFATL8.0CS5rT5cxzaH71SCjj/LK6'),
+    (2, 'slayzer@gmail.com', '$2a$10$soPuHFUkY.nrL50iCD8PbucSGKc4x9AMPQ6s.BnkfnK562jW.SgLm'),
+    (3, 'thexacki@gmail.com', '$2a$10$4dg.S.8eT04jKrwby/ya/.GoGUGEjK8yXAGgmBRlzDs2.CjJQv9Ly'),
+    (4, 'intelijideavich@gmail.com', '$2a$10$mq7KIWLVSDTQX9TOuB5UHudSKcHqfPtBOoJgt1Ins1FX66WRSptlm');
 
 INSERT INTO develop_schema.t_files
 (id, name, type, access_link, size, user_id, parent_id)

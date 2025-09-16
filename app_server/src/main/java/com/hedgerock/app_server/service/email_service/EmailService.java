@@ -5,5 +5,6 @@ import com.hedgerock.app_server.dto.auth.RegisterDTO;
 public interface EmailService {
 
     void sendConfirmationEmail(String to, String token, RegisterDTO registerDTO);
+    void sendRestorePasswordMessage(String to, String token);
 
 }

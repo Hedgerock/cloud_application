@@ -5,7 +5,7 @@ import type {AppDispatch, RootState} from "../../redux/store/store.ts";
 import {useEffect} from "react";
 import {removeCurrentPath} from "../../redux/slices/pathSlice.ts";
 
-export const NotFoundPage = () => {
+const NotFoundPage = () => {
     const dispatch = useDispatch<AppDispatch>();
     const {currentPath} = useSelector((state: RootState) => state.navigation)
 
@@ -22,3 +22,5 @@ export const NotFoundPage = () => {
         </AppStructure>
     )
 }
+
+export default NotFoundPage

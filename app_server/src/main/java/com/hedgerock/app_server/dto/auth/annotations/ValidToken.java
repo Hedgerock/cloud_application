@@ -1,6 +1,7 @@
-package com.hedgerock.app_server.dto.auth.emailValidation;
+package com.hedgerock.app_server.dto.auth.annotations;
 
-import com.hedgerock.app_server.config.UniqueEmailValidator;
+import com.hedgerock.app_server.config.constraints.ActiveTokenValidator;
+import com.hedgerock.app_server.config.constraints.types.TokenType;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -11,11 +12,12 @@ import java.lang.annotation.Target;
 
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = UniqueEmailValidator.class)
-public @interface UniqueEmail {
+@Constraint(validatedBy = ActiveTokenValidator.class)
+public @interface ValidToken {
+    String message() default "Token not valid";
+    TokenType type();
 
-    String message() default "Email already exists";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
-
 }
+

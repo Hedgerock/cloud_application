@@ -1,0 +1,13 @@
+.no-connection-block {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    background: #c5963a;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+}
