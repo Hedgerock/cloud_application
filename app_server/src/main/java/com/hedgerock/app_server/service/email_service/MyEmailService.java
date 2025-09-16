@@ -1,6 +1,8 @@
 package com.hedgerock.app_server.service.email_service;
 
 import com.hedgerock.app_server.dto.auth.RegisterDTO;
+import com.hedgerock.app_server.dto.auth.RestorePasswordDTO;
+import com.hedgerock.app_server.exceptions.SendEmailException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import java.util.NoSuchElementException;
 @Service
 @RequiredArgsConstructor
 public class MyEmailService implements EmailService {
+    private static final String TEMPLATE_OF_CLIENT_PATH = "http://localhost:%s";
 
     private final JavaMailSender javaMailSender;
 
@@ -27,9 +30,9 @@ public class MyEmailService implements EmailService {
     @Value("${email.config.username}")
     private String FROM;
 
-    private String loadConfirmationHtml(String filename) {
+    private String loadHTML(String filename) {
         try {
-            ClassPathResource classPathResource = new ClassPathResource("templates/email/" + filename + ".html");
+            ClassPathResource classPathResource = new ClassPathResource("templates/" + filename + ".html");
 
             try(InputStream inputStream = classPathResource.getInputStream()) {
                 return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
@@ -40,16 +43,7 @@ public class MyEmailService implements EmailService {
         }
     }
 
-    @Override
-    public void sendConfirmationEmail(String to, String token, RegisterDTO registerDTO) {
-        final String CLIENT_PATH = "http://localhost:" + CLIENT_PORT;
-        String html = loadConfirmationHtml("confirmation");
-
-        String subject = "Registration process";
-        String confirmationUrl = String.format((CLIENT_PATH + "/auth/confirm?token=%s"), token);
-
-        html = html.replace("{{confirmation_url}}", confirmationUrl);
-
+    private void sendMimeMessage(String to, String subject, String html) {
         try {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
@@ -61,7 +55,33 @@ public class MyEmailService implements EmailService {
 
             javaMailSender.send(mimeMessage);
         } catch (MessagingException e) {
-            throw new IllegalStateException("Can't send email to: " + to);
+            throw new SendEmailException("Can't send email to: " + to);
         }
+    }
+
+    @Override
+    public void sendConfirmationEmail(String to, String token, RegisterDTO registerDTO) {
+        final String CLIENT_PATH = String.format(TEMPLATE_OF_CLIENT_PATH, CLIENT_PORT);
+        String html = loadHTML("email/confirmation");
+
+        String subject = "Registration process";
+        String confirmationUrl = String.format((CLIENT_PATH + "/auth/confirm?token=%s"), token);
+
+        html = html.replace("{{confirmation_url}}", confirmationUrl);
+
+        sendMimeMessage(to, subject, html);
+    }
+
+    @Override
+    public void sendRestorePasswordMessage(String to, String token) {
+        final String CLIENT_PATH = String.format(TEMPLATE_OF_CLIENT_PATH, CLIENT_PORT);
+        String html = loadHTML("email/restore_password");
+
+        String subject = "Restore password process";
+        String confirmationUrl = String.format((CLIENT_PATH + "/auth/restore_password?token=%s"), token);
+
+        html = html.replace("{{restore_password_url}}", confirmationUrl);
+
+        sendMimeMessage(to, subject, html);
     }
 }

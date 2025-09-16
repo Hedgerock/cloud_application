@@ -1,17 +1,14 @@
 import './App.css'
 import 'nprogress/nprogress.css';
-import {useDispatch} from "react-redux";
-import {useEffect} from "react";
-import {fetchCurrentUser} from "../redux/thunks/fetchCurrentUser.ts";
-import type {AppDispatch} from "../redux/store/store.ts";
 import {AppRoutes} from "./routes/AppRoutes.tsx";
+import {ConnectionTracker} from "./helpers/connection_tracker/ConnectionTracker.tsx";
 
 export const App = () => {
-  const dispatch = useDispatch<AppDispatch>();
 
-  useEffect(() => {
-      dispatch(fetchCurrentUser())
-  }, [dispatch])
-
-  return <><AppRoutes /></>
+  return (
+      <>
+          <ConnectionTracker />
+          <AppRoutes />
+      </>
+  )
 }

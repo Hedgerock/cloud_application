@@ -1,13 +1,14 @@
-package com.hedgerock.app_server.config;
+package com.hedgerock.app_server.config.constraints;
 
-import com.hedgerock.app_server.dto.auth.emailValidation.UniqueEmail;
+import com.hedgerock.app_server.dto.auth.annotations.UniqueEmail;
 import com.hedgerock.app_server.repository.UserRepository;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
-@Configuration
+@Component
 @RequiredArgsConstructor
 public class UniqueEmailValidator implements ConstraintValidator<UniqueEmail, String> {
 

@@ -2,17 +2,22 @@ import {type IRegisterCredentials, useRegisterMutation} from "../../redux/api/au
 import {useCallback} from "react";
 import {useNavigate} from "react-router-dom";
 import {setLocalStorage} from "../../utils/setAndGetLocalStorage.ts";
-import {AUTH_CRED_KEY} from "../../pages/auth/final_confirm/FinalConfirmationPage.tsx";
+import {AUTH_CRED_KEY} from "../../utils/constants";
+import {useSelector} from "react-redux";
+import type {RootState} from "../../redux/store/store.ts";
 
-type ErrorResponse = {
+export type ErrorResponse = {
     data: { errors: string[] }
 }
 
 export const useRegister = () => {
     const [register, { isLoading, isError, error }] = useRegisterMutation();
     const navigate = useNavigate();
+    const health = useSelector((root: RootState) => root.health);
 
     const handleRegister = useCallback(async({ email, password }: IRegisterCredentials) => {
+        if (!health.isOnline) return;
+        
         try {
             await register({ email, password }).unwrap();
             navigate("/auth/confirmation_email")
@@ -21,7 +26,7 @@ export const useRegister = () => {
             const response = e as ErrorResponse;
             console.log(response.data.errors);
         }
-    }, [register, navigate])
+    }, [health.isOnline, register, navigate])
 
     const getErrors = error as ErrorResponse;
 

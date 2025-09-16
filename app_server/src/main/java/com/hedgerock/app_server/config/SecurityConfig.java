@@ -31,12 +31,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .exceptionHandling(exception ->
-                        exception
-                            .authenticationEntryPoint(customerAuthenticationEntryPoint)
+                        exception.authenticationEntryPoint(customerAuthenticationEntryPoint)
                 )
                 .httpBasic(basic ->
-                        basic
-                            .authenticationEntryPoint(customerBasicEntryPoint)
+                        basic.authenticationEntryPoint(customerBasicEntryPoint)
                 )
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)

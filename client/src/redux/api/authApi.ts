@@ -35,6 +35,20 @@ export const authApi = createApi({
                body
            }) 
         }),
+        restorePassword: builder.mutation<void, { email: string }>({
+           query: (body) => ({
+               url: "/api/auth/restore_password",
+               method: HttpMethods.POST,
+               body
+           })
+        }),
+        confirmPassword: builder.mutation<void, { token: string, password: string }>({
+            query: (body) => ({
+                url: "/api/auth/confirm_new_password",
+                method: HttpMethods.POST,
+                body
+            })
+        }),
         confirm: builder.mutation<void, { token: string }>({
            query: (body) => ({
                url: "/api/auth/confirm_email",
@@ -59,5 +73,7 @@ export const {
     useLoginMutation,
     useLogoutMutation,
     useRegisterMutation,
-    useConfirmMutation
+    useConfirmMutation,
+    useRestorePasswordMutation,
+    useConfirmPasswordMutation
 } = authApi;

@@ -5,8 +5,12 @@ import {baseApiUrl} from "../constants";
 
 export const fetchCurrentUser = createAsyncThunk(
     "auth/fetchCurrentUser",
-    async (_, thunkAPI) => {
+    async (isOnline: boolean, thunkAPI) => {
         const { dispatch } = thunkAPI;
+        if (!isOnline) {
+            dispatch(setLoadingStatus({ isLoading: false }));
+            return;
+        }
 
         try {
             const response = await fetch(`${baseApiUrl}/api/auth/me`, {

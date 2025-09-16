@@ -1,8 +1,8 @@
 import {useLocation, useNavigationType} from "react-router-dom";
 import {useEffect, useRef} from "react";
 import {useDispatch} from "react-redux";
-import type {AppDispatch} from "../redux/store/store.ts";
-import {setPrevPath} from "../redux/slices/pathSlice.ts";
+import type {AppDispatch} from "../../../redux/store/store.ts";
+import {setPrevPath} from "../../../redux/slices/pathSlice.ts";
 
 export const PathTracker = () => {
     const { pathname } = useLocation();

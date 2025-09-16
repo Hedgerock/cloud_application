@@ -4,10 +4,10 @@ import {Link} from "react-router-dom";
 import {FormLabel} from "../../../components/auth/form_label/FormLabel.tsx";
 import '../Auth.css';
 import {useRegister} from "../../../hooks/auth/useRegister.ts";
-import {ErrorBlock} from "../../../components/error/ErrorBlock.tsx";
 import {validatePasswords} from "../../../utils/constants";
+import {ErrorList} from "../../../components/error/ErrorList.tsx";
 
-export const RegistrationPage = memo(() => {
+const RegistrationPage = memo(() => {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [repeatPassword, setRepeatPassword] = useState<string>("");
@@ -61,13 +61,9 @@ export const RegistrationPage = memo(() => {
                 >Register</button>
             </div>
 
-            { isError &&
-                error.data.errors.map((el: string, index: number) => {
-                    return (
-                        <ErrorBlock message={el} key = { index } />
-                    )
-                })
-            }
+            { isError && <ErrorList error={error} /> }
         </form>
     )
 })
+
+export default RegistrationPage

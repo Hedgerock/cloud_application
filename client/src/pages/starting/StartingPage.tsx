@@ -8,7 +8,7 @@ import type {ISuccessPageProps} from "../../models/ISuccessPageProps.ts";
 import {CurrentUser} from "../../components/current_user/CurrentUser.tsx";
 import {useAuth} from "../../hooks/auth/useAuth.ts";
 
-export const StartingPage = memo(() => {
+const StartingPage = memo(() => {
     const { data, isError, isFetching, currentData } = useGetUserByIdQuery(1);
     const { isAuthenticated } = useAuth();
 
@@ -33,3 +33,5 @@ const SuccessPage: FC<ISuccessPageProps> = ({ currentData, data }) => {
         </Loading>
     )
 }
+
+export default StartingPage

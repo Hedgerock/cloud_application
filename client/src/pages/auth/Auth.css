@@ -37,6 +37,14 @@
     width: 100%;
 }
 
+.auth-form__forget-password-link {
+    width: 150px;
+    font-size: .75rem;
+    text-align: center;
+
+    align-self: flex-end;
+}
+
 .login-buttons {
     display: flex;
     justify-content: space-between;

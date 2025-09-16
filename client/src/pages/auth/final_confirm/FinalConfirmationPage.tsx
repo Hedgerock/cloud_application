@@ -6,7 +6,7 @@ import {useNavigate} from "react-router-dom";
 import {AUTH_CRED_KEY, NAVIGATE_TO_REGISTER_PATH, TOKEN_SEARCH_PARAM_KEY} from "../../../utils/constants";
 import type {IUserRegisterCredentials} from "../../../models/IUserRegistrationCredentials.ts";
 
-export const FinalConfirmationPage = () => {
+const FinalConfirmationPage = () => {
     const params = new URLSearchParams(window.location.search);
     const token = params.get(TOKEN_SEARCH_PARAM_KEY) || "";
     const { login } = useLogin();
@@ -39,3 +39,5 @@ export const FinalConfirmationPage = () => {
         <h1>Confirmed</h1>
     )
 }
+
+export default FinalConfirmationPage

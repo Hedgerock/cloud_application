@@ -3,26 +3,10 @@ import '../Auth.css';
 import {useConfigureLogin} from "./useConfigureLogin.ts";
 import {ErrorBlock} from "../../../components/error/ErrorBlock.tsx";
 import {FormLabel} from "../../../components/auth/form_label/FormLabel.tsx";
-import {memo, useMemo} from "react";
+import {memo} from "react";
 
-export const LoginPage = memo(() => {
+const LoginPage = memo(() => {
     const { handleSubmit, setEmail, setPassword, isLoading, isError } = useConfigureLogin();
-    
-    const buttons = useMemo(() => (
-        <div className="login-buttons">
-            <button
-                type="submit"
-                disabled={isLoading}
-                className="login-buttons__button"
-            >Login</button>
-            <Link
-                to={"/auth/register"}
-                className="login-buttons__button"
-            >
-                Register page
-            </Link>
-        </div>
-    ), [isLoading])
     
     return (
         <form onSubmit={ handleSubmit } className="auth-form">
@@ -42,23 +26,30 @@ export const LoginPage = memo(() => {
                 />
             </fieldset>
 
-            {/*<div className="login-buttons">*/}
-            {/*    <button*/}
-            {/*        type="submit"*/}
-            {/*        disabled={isLoading}*/}
-            {/*        className="login-buttons__button"*/}
-            {/*    >Login</button>*/}
-            {/*    <Link*/}
-            {/*        to={"/auth/register"}*/}
-            {/*        className="login-buttons__button"*/}
-            {/*    >*/}
-            {/*        Register page*/}
-            {/*    </Link>*/}
-            {/*</div>*/}
+            <Link
+                className="auth-form__forget-password-link"
+                to={"/auth/forgot_password"}
+            >
+                Forgot password
+            </Link>
 
-            { buttons }
+            <div className="login-buttons">
+                <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="login-buttons__button"
+                >Login</button>
+                <Link
+                    to={"/auth/register"}
+                    className="login-buttons__button"
+                >
+                    Register page
+                </Link>
+            </div>
 
             { isError && <ErrorBlock message={"Wrong email or password"}/> }
         </form>
     )
 })
+
+export default LoginPage

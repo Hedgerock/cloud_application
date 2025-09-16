@@ -2,7 +2,7 @@ import {Link, Outlet, useLocation} from "react-router-dom";
 import {AnimatedTitle} from "../../components/utility_components/animated_title/AnimatedTitle.tsx";
 import {memo} from "react";
 
-type AuthPaths = "login" | "register" | "confirmation_email" | "confirm"
+type AuthPaths = "login" | "register" | "confirmation_email" | "confirm" | "forgot_password" | "restore_password";
 
 const getCurrentTitle = (path: AuthPaths) => {
     switch (path) {
@@ -13,11 +13,15 @@ const getCurrentTitle = (path: AuthPaths) => {
         case "login":
             return "Login";
         case "confirm":
-            return "Final confirm"
+            return "Final confirm";
+        case "forgot_password":
+            return "Restore password"
+        case "restore_password":
+            return "Set new password";
     }
 }
 
-export const AuthTemplate = memo(() => {
+const AuthTemplate = memo(() => {
     const { pathname } = useLocation();
 
     const path = pathname.replace("/auth/", "");
@@ -31,3 +35,5 @@ export const AuthTemplate = memo(() => {
         </div>
     )
 })
+
+export default AuthTemplate

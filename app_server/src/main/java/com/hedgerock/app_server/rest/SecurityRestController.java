@@ -1,10 +1,13 @@
 package com.hedgerock.app_server.rest;
 
+import com.hedgerock.app_server.config.constraints.types.TokenType;
 import com.hedgerock.app_server.dto.auth.AuthDTO;
 import com.hedgerock.app_server.dto.auth.LoginDTO;
 import com.hedgerock.app_server.dto.auth.RegisterDTO;
-import com.hedgerock.app_server.dto.auth.emailValidation.ValidationTokenDTO;
-import com.hedgerock.app_server.entity.UserEntity;
+import com.hedgerock.app_server.dto.auth.RestorePasswordDTO;
+import com.hedgerock.app_server.dto.auth.validation.ValidationPasswordTokenDTO;
+import com.hedgerock.app_server.dto.auth.validation.ValidationTokenDTO;
+import com.hedgerock.app_server.exceptions.CurrentBindException;
 import com.hedgerock.app_server.service.email_service.EmailService;
 import com.hedgerock.app_server.service.user_service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,35 +43,75 @@ public class SecurityRestController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
+    private String getToken() {
+        return UUID.randomUUID().toString();
+    }
+
+    //TODO WRITE DTO FOR RESPONSE
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterDTO registerDTO,
+    public ResponseEntity<Map<String, String>> registerUser(@Valid @RequestBody RegisterDTO registerDTO,
                                           BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
-            List<String> errors = bindingResult.getFieldErrors().stream()
-                    .map(error -> error.getField() + ": " + error.getDefaultMessage())
-                    .toList();
-
-            return ResponseEntity.badRequest().body(Map.of("errors", errors));
+            throw new CurrentBindException("Failed to register", bindingResult);
         }
 
-        final String uuid = UUID.randomUUID().toString();
+        final String token = getToken();
 
-        emailService.sendConfirmationEmail(registerDTO.email(), uuid, registerDTO);
-        userService.cachePendingUser(uuid, registerDTO.getEncryptedDTO(passwordEncoder));
+        emailService.sendConfirmationEmail(registerDTO.email(), token, registerDTO);
+        userService.cachePendingUser(token, registerDTO.getEncryptedDTO(passwordEncoder));
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(Map.of("message",
+                String.format("Registration request for user %s has successfully created", registerDTO.email())));
+    }
+
+    @PostMapping("/restore_password")
+    public ResponseEntity<Map<String, String>> restorePassword(
+            @Valid @RequestBody RestorePasswordDTO restorePasswordDTO,
+            BindingResult bindingResult
+    ) {
+        if (bindingResult.hasErrors()) {
+            throw new CurrentBindException("Wrong email", bindingResult);
+        }
+
+        final String token = getToken();
+        emailService.sendRestorePasswordMessage(restorePasswordDTO.email(), token);
+        userService.cachePendingEmailForRestore(TokenType.RESTORE_PASSWORD, token, restorePasswordDTO.email());
+
+        return ResponseEntity.ok(Map.of("message",
+                String.format("Email to %s has been sent", restorePasswordDTO.email())));
+    }
+
+    @PostMapping("/confirm_new_password")
+    public ResponseEntity<Map<String, String>> confirmPassword(
+            @Valid @RequestBody ValidationPasswordTokenDTO validationPasswordTokenDTO,
+            BindingResult bindingResult
+    ) {
+        if (bindingResult.hasErrors()) {
+            throw new CurrentBindException("Invalid changing password details", bindingResult);
+        }
+
+        userService.confirmPassword(validationPasswordTokenDTO);
+
+        return ResponseEntity.ok(Map.of("message", "Password has successfully changed"));
     }
 
     @PostMapping("/confirm_email")
-    public ResponseEntity<?> confirmEmail(@RequestBody ValidationTokenDTO tokenDTO) {
+    public ResponseEntity<Map<String, String>> confirmEmail(
+            @Valid @RequestBody ValidationTokenDTO tokenDTO,
+   BindingResult bindingResult
+    ) {
+        if (bindingResult.hasErrors()) {
+            throw new CurrentBindException("Invalid token", bindingResult);
+        }
+
         userService.confirmUser(tokenDTO.token());
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(Map.of("message", "User has successfully confirmed and created"));
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<Map<String, String>> logout(HttpServletRequest request, HttpServletResponse response) {
         HttpSession httpSession = request.getSession(false);
 
         if (httpSession != null) {
@@ -77,11 +120,19 @@ public class SecurityRestController {
 
         SecurityContextHolder.clearContext();
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(Map.of("message", "Successfully logout"));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDTO loginValue, HttpServletRequest request) {
+    public ResponseEntity<Map<String, String>> login(
+            @Valid @RequestBody LoginDTO loginValue,
+            BindingResult bindingResult,
+            HttpServletRequest request
+    ) {
+        if (bindingResult.hasErrors()) {
+            throw new CurrentBindException("Invalid login credentials", bindingResult);
+        }
+
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginValue.email(), loginValue.password());
 
@@ -92,7 +143,7 @@ public class SecurityRestController {
         HttpSession session = request.getSession(true);
         session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(Map.of("message", "Successfully logged in"));
     }
 
     @GetMapping("/me")
