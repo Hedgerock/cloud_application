@@ -5,13 +5,12 @@ import {useLogin} from "../../../hooks/auth/useLogin.ts";
 import {useNavigate} from "react-router-dom";
 import {AUTH_CRED_KEY, NAVIGATE_TO_REGISTER_PATH, TOKEN_SEARCH_PARAM_KEY} from "../../../utils/constants";
 import type {IUserRegisterCredentials} from "../../../models/IUserRegistrationCredentials.ts";
+import {useGetSearchParams} from "../../../hooks/useGetSearchParams.ts";
 
 const FinalConfirmationPage = () => {
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get(TOKEN_SEARCH_PARAM_KEY) || "";
+    const token = useGetSearchParams(TOKEN_SEARCH_PARAM_KEY) || "";
     const { login } = useLogin();
     const navigate = useNavigate();
-    
     const {confirm} = useConfirm();
 
     useEffect(() => {

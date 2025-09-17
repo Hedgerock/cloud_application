@@ -7,6 +7,7 @@ import com.hedgerock.app_server.dto.auth.RegisterDTO;
 import com.hedgerock.app_server.dto.auth.RestorePasswordDTO;
 import com.hedgerock.app_server.dto.auth.validation.ValidationPasswordTokenDTO;
 import com.hedgerock.app_server.dto.auth.validation.ValidationTokenDTO;
+import com.hedgerock.app_server.dto.response.SimpleResponseDTO;
 import com.hedgerock.app_server.exceptions.CurrentBindException;
 import com.hedgerock.app_server.service.email_service.EmailService;
 import com.hedgerock.app_server.service.user_service.UserService;
@@ -30,8 +31,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+
+import static com.hedgerock.app_server.rest.utils.RestUtils.getToken;
 
 @RestController
 @RequestMapping("api/auth")
@@ -43,14 +44,9 @@ public class SecurityRestController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
-    private String getToken() {
-        return UUID.randomUUID().toString();
-    }
-
-    //TODO WRITE DTO FOR RESPONSE
     @PostMapping("/register")
-    public ResponseEntity<Map<String, String>> registerUser(@Valid @RequestBody RegisterDTO registerDTO,
-                                          BindingResult bindingResult
+    public ResponseEntity<SimpleResponseDTO> registerUser(@Valid @RequestBody RegisterDTO registerDTO,
+                                                          BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
             throw new CurrentBindException("Failed to register", bindingResult);
@@ -59,14 +55,19 @@ public class SecurityRestController {
         final String token = getToken();
 
         emailService.sendConfirmationEmail(registerDTO.email(), token, registerDTO);
-        userService.cachePendingUser(token, registerDTO.getEncryptedDTO(passwordEncoder));
+        userService.cachePendingUser(
+                TokenType.CONFIRM_EMAIL, token, registerDTO.getEncryptedDTO(passwordEncoder)
+        );
 
-        return ResponseEntity.ok(Map.of("message",
-                String.format("Registration request for user %s has successfully created", registerDTO.email())));
+        SimpleResponseDTO simpleResponseDTO =
+                new SimpleResponseDTO(
+                        String.format("Registration request for user %s has successfully created", registerDTO.email()));
+
+        return ResponseEntity.ok(simpleResponseDTO);
     }
 
     @PostMapping("/restore_password")
-    public ResponseEntity<Map<String, String>> restorePassword(
+    public ResponseEntity<SimpleResponseDTO> restorePassword(
             @Valid @RequestBody RestorePasswordDTO restorePasswordDTO,
             BindingResult bindingResult
     ) {
@@ -78,12 +79,15 @@ public class SecurityRestController {
         emailService.sendRestorePasswordMessage(restorePasswordDTO.email(), token);
         userService.cachePendingEmailForRestore(TokenType.RESTORE_PASSWORD, token, restorePasswordDTO.email());
 
-        return ResponseEntity.ok(Map.of("message",
-                String.format("Email to %s has been sent", restorePasswordDTO.email())));
+        SimpleResponseDTO simpleResponseDTO =
+                new SimpleResponseDTO(
+                        String.format("Email to %s has been sent", restorePasswordDTO.email()));
+
+        return ResponseEntity.ok(simpleResponseDTO);
     }
 
     @PostMapping("/confirm_new_password")
-    public ResponseEntity<Map<String, String>> confirmPassword(
+    public ResponseEntity<SimpleResponseDTO> confirmPassword(
             @Valid @RequestBody ValidationPasswordTokenDTO validationPasswordTokenDTO,
             BindingResult bindingResult
     ) {
@@ -93,11 +97,14 @@ public class SecurityRestController {
 
         userService.confirmPassword(validationPasswordTokenDTO);
 
-        return ResponseEntity.ok(Map.of("message", "Password has successfully changed"));
+        SimpleResponseDTO simpleResponseDTO =
+                new SimpleResponseDTO("Password has successfully changed");
+
+        return ResponseEntity.ok(simpleResponseDTO);
     }
 
     @PostMapping("/confirm_email")
-    public ResponseEntity<Map<String, String>> confirmEmail(
+    public ResponseEntity<SimpleResponseDTO> confirmEmail(
             @Valid @RequestBody ValidationTokenDTO tokenDTO,
    BindingResult bindingResult
     ) {
@@ -107,11 +114,12 @@ public class SecurityRestController {
 
         userService.confirmUser(tokenDTO.token());
 
-        return ResponseEntity.ok(Map.of("message", "User has successfully confirmed and created"));
+        SimpleResponseDTO simpleResponseDTO = new SimpleResponseDTO("User has successfully confirmed and created");
+        return ResponseEntity.ok(simpleResponseDTO);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Map<String, String>> logout(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<SimpleResponseDTO> logout(HttpServletRequest request, HttpServletResponse response) {
         HttpSession httpSession = request.getSession(false);
 
         if (httpSession != null) {
@@ -120,11 +128,12 @@ public class SecurityRestController {
 
         SecurityContextHolder.clearContext();
 
-        return ResponseEntity.ok(Map.of("message", "Successfully logout"));
+        SimpleResponseDTO simpleResponseDTO = new SimpleResponseDTO("Successfully logout");
+        return ResponseEntity.ok(simpleResponseDTO);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(
+    public ResponseEntity<SimpleResponseDTO> login(
             @Valid @RequestBody LoginDTO loginValue,
             BindingResult bindingResult,
             HttpServletRequest request
@@ -143,7 +152,8 @@ public class SecurityRestController {
         HttpSession session = request.getSession(true);
         session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
 
-        return ResponseEntity.ok(Map.of("message", "Successfully logged in"));
+        SimpleResponseDTO simpleResponseDTO = new SimpleResponseDTO("Successfully logged in");
+        return ResponseEntity.ok(simpleResponseDTO);
     }
 
     @GetMapping("/me")
