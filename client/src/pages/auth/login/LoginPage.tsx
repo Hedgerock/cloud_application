@@ -1,31 +1,16 @@
 import {Link} from "react-router-dom";
 import '../Auth.css';
-import {useConfigureLogin} from "./useConfigureLogin.ts";
-import {ErrorBlock} from "../../../components/error/ErrorBlock.tsx";
-import {FormLabel} from "../../../components/auth/form_label/FormLabel.tsx";
+import {useConfigureLogin} from "./useConfigureLogin.tsx";
 import {memo} from "react";
+import {FormTemplate} from "../../../hoc/template/FormTemplate.tsx";
+import {ErrorList} from "../../../components/error/ErrorList.tsx";
+import type {ErrorResponse} from "../../../hooks/auth/useRegister.ts";
 
 const LoginPage = memo(() => {
-    const { handleSubmit, setEmail, setPassword, isLoading, isError } = useConfigureLogin();
+    const { handleSubmit, isLoading, isError, Fields, error } = useConfigureLogin();
     
     return (
-        <form onSubmit={ handleSubmit } className="auth-form">
-            <fieldset className="auth-form-fieldset">
-                <FormLabel
-                    labelTitle={"Login"}
-                    inputType={"email"}
-                    idTitle={"authEmail"}
-                    setValue={setEmail}
-                />
-
-                <FormLabel
-                    labelTitle={"Password"}
-                    inputType={"password"}
-                    idTitle={"authPassword"}
-                    setValue={setPassword}
-                />
-            </fieldset>
-
+        <FormTemplate className={"auth-form"} submitFunc={handleSubmit} Fields={Fields}>
             <Link
                 className="auth-form__forget-password-link"
                 to={"/auth/forgot_password"}
@@ -47,8 +32,8 @@ const LoginPage = memo(() => {
                 </Link>
             </div>
 
-            { isError && <ErrorBlock message={"Wrong email or password"}/> }
-        </form>
+            { isError && <ErrorList error={error as ErrorResponse} />}
+        </FormTemplate>
     )
 })
 

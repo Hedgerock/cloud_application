@@ -4,7 +4,8 @@ import {useGetLabelCredentials} from "../../../pages/auth/login/useGetLabelCrede
 import './FormLabel.css';
 import {useGetFocus} from "../../../hooks/useGetFocus.ts";
 
-export const FormLabel: FC<ILoginLabelProps> = memo(({ inputType, setValue, idTitle, labelTitle }) => {
+export const FormLabel: FC<ILoginLabelProps> = memo(
+    ({ inputType, setValue, idTitle, labelTitle, className = "auth-form" }) => {
     const { textContent, type, inputTitle, handleType, reset, handleChangeValue } =
         useGetLabelCredentials({ inputType, setValue, idTitle });
 
@@ -15,13 +16,13 @@ export const FormLabel: FC<ILoginLabelProps> = memo(({ inputType, setValue, idTi
     } = useGetFocus<HTMLLabelElement>({ extraCondition: inputType === "password" });
 
     return (
-        <label className="auth-form-fieldset-label" ref = {currentRef}>
-            <span className="auth-form-fieldset-label__title">{ labelTitle }</span>
+        <label className={`${className}-fieldset-label`} ref = {currentRef}>
+            <span className={`${className}-fieldset-label__title`}>{ labelTitle }</span>
             <input
                 id={`form${inputTitle}`}
                 name={`form${inputTitle}Input`}
                 type={ type }
-                className="auth-form-fieldset-label__value"
+                className={`${className}-fieldset-label__value`}
                 onChange={ handleChangeValue }
                 onFocus={handleFocus}
             />
@@ -29,7 +30,7 @@ export const FormLabel: FC<ILoginLabelProps> = memo(({ inputType, setValue, idTi
             { inputType === "password" && isFocused &&
                 <button
                     tabIndex={-1}
-                    className="auth-form-fieldset-label__show-hide-button"
+                    className={`${className}-fieldset-label__show-hide-button`}
                     type="button"
                     onMouseDown={handleType}
                     onMouseUp={reset}

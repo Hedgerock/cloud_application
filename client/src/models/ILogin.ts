@@ -7,4 +7,5 @@ export interface ILoginLabelProps {
     idTitle: string;
     setValue: React.Dispatch<React.SetStateAction<string>>;
     labelTitle: string;
+    className?: string;
 }

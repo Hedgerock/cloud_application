@@ -13,6 +13,7 @@ import com.hedgerock.app_server.entity.UserEntity;
 import com.hedgerock.app_server.exceptions.*;
 import com.hedgerock.app_server.repository.AuthorityRepository;
 import com.hedgerock.app_server.repository.UserRepository;
+import com.hedgerock.app_server.service.ServiceUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -44,9 +45,9 @@ public class MyUserService implements UserService {
     }
 
     @Override
-    public void cachePendingUser(String token, RegisterDTO registerDTO) {
+    public void cachePendingUser(TokenType tokenType, String token, RegisterDTO registerDTO) {
         try {
-            String key = getKeyToken(CONFIRM_EMAIL_TOKEN_KEY, token);
+            String key = getKeyToken(tokenType.getValue(), token);
             String emailKey = getKeyToken(TokenType.CONFIRM_EMAIL.getValue(), registerDTO.email());
             String value = objectMapper.writeValueAsString(registerDTO);
 
@@ -79,6 +80,7 @@ public class MyUserService implements UserService {
 
         try {
             RegisterDTO registerDTO = objectMapper.readValue(cached, RegisterDTO.class);
+            String emailKey = getKeyToken(CONFIRM_EMAIL_TOKEN_KEY, registerDTO.email());
             AuthoritiesEntity userRole = authorityRepository
                 .findByAuthority(Roles.USER.name())
                 .orElseThrow(() ->
@@ -86,8 +88,9 @@ public class MyUserService implements UserService {
                 )
             );
 
-            redisTemplate.delete(key);
+            ServiceUtils.deleteRedisKeys(redisTemplate, key, emailKey);
             repository.save(registerDTO.toEntity(userRole));
+
         } catch (JsonProcessingException e) {
             showErrorMessage(cached);
             throw new UserConfirmException("Failed to confirm user");
@@ -104,12 +107,15 @@ public class MyUserService implements UserService {
             throw new InvalidTokenException(INVALID_TOKEN_EXCEPTION_MESSAGE);
         }
 
+        String emailKey = getKeyToken(RESTORE_PASSWORD_TOKEN_KEY, email);
+
         UserEntity user = repository.findByEmail(email).orElseThrow(() ->
                 new UserNotFoundException(String.format("User with email %s not found", email)));
 
         user.setPassword(passwordEncoder.encode(validationPasswordTokenDTO.password()));
+
+        ServiceUtils.deleteRedisKeys(redisTemplate, key, emailKey);
         repository.save(user);
-        redisTemplate.delete(key);
     }
 
     @Override
