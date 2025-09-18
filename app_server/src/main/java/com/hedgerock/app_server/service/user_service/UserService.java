@@ -14,6 +14,6 @@ public interface UserService {
 
     void cachePendingUser(TokenType tokenType, String token, RegisterDTO encryptedDTO);
     void cachePendingEmailForRestore(TokenType tokenType, String token, String email);
-    void confirmUser(String token);
-    void confirmPassword(ValidationPasswordTokenDTO validationPasswordTokenDTO);
+    void confirmUser(TokenType tokenType, String token);
+    void confirmPassword(TokenType tokenType, ValidationPasswordTokenDTO validationPasswordTokenDTO);
 }

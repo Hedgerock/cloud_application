@@ -95,7 +95,7 @@ public class SecurityRestController {
             throw new CurrentBindException("Invalid changing password details", bindingResult);
         }
 
-        userService.confirmPassword(validationPasswordTokenDTO);
+        userService.confirmPassword(TokenType.RESTORE_PASSWORD, validationPasswordTokenDTO);
 
         SimpleResponseDTO simpleResponseDTO =
                 new SimpleResponseDTO("Password has successfully changed");
@@ -112,7 +112,7 @@ public class SecurityRestController {
             throw new CurrentBindException("Invalid token", bindingResult);
         }
 
-        userService.confirmUser(tokenDTO.token());
+        userService.confirmUser(TokenType.CONFIRM_EMAIL, tokenDTO.token());
 
         SimpleResponseDTO simpleResponseDTO = new SimpleResponseDTO("User has successfully confirmed and created");
         return ResponseEntity.ok(simpleResponseDTO);

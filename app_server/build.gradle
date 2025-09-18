@@ -48,4 +48,9 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+    doFirst {
+        jvmArgs += [
+                "-javaagent:${configurations.testRuntimeClasspath.find { it.name.contains("mockito-core") }}"
+        ]
+    }
 }
