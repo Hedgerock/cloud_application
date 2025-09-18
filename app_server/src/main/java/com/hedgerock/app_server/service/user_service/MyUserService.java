@@ -48,7 +48,7 @@ public class MyUserService implements UserService {
     public void cachePendingUser(TokenType tokenType, String token, RegisterDTO registerDTO) {
         try {
             String key = getKeyToken(tokenType.getValue(), token);
-            String emailKey = getKeyToken(TokenType.CONFIRM_EMAIL.getValue(), registerDTO.email());
+            String emailKey = getKeyToken(tokenType.getValue(), registerDTO.email());
             String value = objectMapper.writeValueAsString(registerDTO);
 
             redisTemplate.opsForValue().set(key, value, Duration.ofMinutes(TIME_TO_LIVE_IN_MINUTES));
@@ -70,8 +70,8 @@ public class MyUserService implements UserService {
 
     @Override
     @Transactional
-    public void confirmUser(String token) {
-        String key = getKeyToken(CONFIRM_EMAIL_TOKEN_KEY, token);
+    public void confirmUser(TokenType tokenType, String token) {
+        String key = getKeyToken(tokenType.getValue(), token);
         String cached = redisTemplate.opsForValue().get(key);
 
         if (cached == null) {
@@ -80,7 +80,7 @@ public class MyUserService implements UserService {
 
         try {
             RegisterDTO registerDTO = objectMapper.readValue(cached, RegisterDTO.class);
-            String emailKey = getKeyToken(CONFIRM_EMAIL_TOKEN_KEY, registerDTO.email());
+            String emailKey = getKeyToken(tokenType.getValue(), registerDTO.email());
             AuthoritiesEntity userRole = authorityRepository
                 .findByAuthority(Roles.USER.name())
                 .orElseThrow(() ->
@@ -99,23 +99,23 @@ public class MyUserService implements UserService {
 
     @Override
     @Transactional
-    public void confirmPassword(ValidationPasswordTokenDTO validationPasswordTokenDTO) {
-        String key = getKeyToken(RESTORE_PASSWORD_TOKEN_KEY, validationPasswordTokenDTO.token());
+    public void confirmPassword(
+            TokenType tokenType, ValidationPasswordTokenDTO validationPasswordTokenDTO
+    ) {
+        String key = getKeyToken(tokenType.getValue(), validationPasswordTokenDTO.token());
         String email = redisTemplate.opsForValue().get(key);
 
         if (email == null) {
             throw new InvalidTokenException(INVALID_TOKEN_EXCEPTION_MESSAGE);
         }
 
-        String emailKey = getKeyToken(RESTORE_PASSWORD_TOKEN_KEY, email);
+        String emailKey = getKeyToken(tokenType.getValue(), email);
 
         UserEntity user = repository.findByEmail(email).orElseThrow(() ->
                 new UserNotFoundException(String.format("User with email %s not found", email)));
 
         user.setPassword(passwordEncoder.encode(validationPasswordTokenDTO.password()));
-
         ServiceUtils.deleteRedisKeys(redisTemplate, key, emailKey);
-        repository.save(user);
     }
 
     @Override
