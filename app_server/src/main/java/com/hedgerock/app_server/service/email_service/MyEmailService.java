@@ -23,6 +23,7 @@ public class MyEmailService implements EmailService {
     private String FROM;
 
     @Override
+    //TODO Remove RegisterDTO from method
     public void sendConfirmationEmail(String to, String token, RegisterDTO registerDTO) {
         final String CLIENT_PATH = String.format(TEMPLATE_OF_CLIENT_PATH, CLIENT_PORT);
         String html = loadHTML("email/confirmation");
