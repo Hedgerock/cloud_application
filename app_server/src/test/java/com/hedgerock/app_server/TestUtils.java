@@ -17,11 +17,13 @@ import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
 import org.mockito.Mockito;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Stream;
 
 public class TestUtils {
     private TestUtils() {}
@@ -143,6 +145,13 @@ public class TestUtils {
                         new AuthoritiesEntity(1L, "USER")
                 )
         );
+    }
+
+    public static List<SimpleGrantedAuthority> getAuthorities() {
+        return Stream.of(new AuthoritiesEntity(1L, "USER"))
+                .map(AuthoritiesEntity::getAuthority)
+                .map(SimpleGrantedAuthority::new)
+                .toList();
     }
 
     public static CurrentUserDTO getUserDTO() {
