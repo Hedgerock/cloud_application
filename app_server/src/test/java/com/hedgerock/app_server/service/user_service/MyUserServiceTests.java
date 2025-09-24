@@ -2,6 +2,7 @@ package com.hedgerock.app_server.service.user_service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hedgerock.app_server.TestUtils;
 import com.hedgerock.app_server.config.constraints.types.TokenType;
 import com.hedgerock.app_server.dto.Roles;
 import com.hedgerock.app_server.dto.auth.RegisterDTO;
@@ -27,10 +28,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static com.hedgerock.app_server.service.user_service.TestUtils.*;
-import static com.hedgerock.app_server.service.user_service.TestUtils.getAuthoritiesEntity;
-import static com.hedgerock.app_server.service.user_service.TestUtils.getValidationPasswordTokenDTO;
-import static com.hedgerock.app_server.service.user_service.TestUtils.getValueAsString;
+import static com.hedgerock.app_server.TestUtils.*;
+import static com.hedgerock.app_server.TestUtils.getAuthoritiesEntity;
+import static com.hedgerock.app_server.TestUtils.getValidationPasswordTokenDTO;
+import static com.hedgerock.app_server.TestUtils.getValueAsString;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
